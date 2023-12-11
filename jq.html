@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style type="text/css">
+        @import url("https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css");
+        .container {
+            width: 90% ;
+            margin: 0 auto;
+        }
+        .pure-form {
+            margin: 150px auto;
+            text-align: center;
+        }
+        #show-result {
+            margin-top: 25px ;
+        }
+        #second-operand , #operator {
+            margin : 0 10px ;
+        }
+        #result {
+            margin-left: 10px ;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js" defer></script>
+    <script type="text/javascript">
+        const validOperators = ["+","-","*","/","%"];
+        let firstOperand;
+        let operator;
+        let secondOperand;
+        let result;
+        let showResultButton;
+        window.addEventListener('load',function(){
+            firstOperand = $('#first-operand');
+            operator = $('#operator');
+            secondOperand = $('#second-operand');
+            result = $('#result');
+            showResultButton = $('#show-result');
+            bindEvents();
+        });
+        function bindEvents(){
+            showResultButton.click(showResultListener);
+        }
+        function showResultListener(event){
+            event.preventDefault();
+
+            const operatorValue = operator.val();
+            const firstOperandValue = Number.parseFloat(firstOperand.val());
+            const secondOperandValue = Number.parseFloat(secondOperand.val());
+
+            if(!operatorIsValid(operatorValue)){
+                emptyResult();
+                window.alert("you should enter a valid operator for calculating ...");
+                return ;
+            } else if (isNaN(firstOperandValue) || isNaN(secondOperandValue)) {
+                emptyResult();
+                window.alert("please enter a valid number ... ");
+                return ;
+            }else if(
+                (operatorValue=="%" || operatorValue=="/") &&
+                (firstOperandValue==0 || secondOperandValue==0)
+            ){
+                emptyResult();
+                window.alert("division by zero ...")
+                return ;
+            }
+
+            const calculateResult = calculate(firstOperandValue,secondOperandValue,operatorValue);
+            result.val(calculateResult);
+
+        }
+        function calculate(firstNumber , secondNumber , operator){
+            switch (operator) {
+                case "+" :
+                    return firstNumber + secondNumber ;
+                case "-" :
+                    return firstNumber - secondNumber ;
+                case "/" :
+                    return firstNumber / secondNumber ;
+                case "%" :
+                    return firstNumber % secondNumber ;
+            }
+        }
+        function emptyResult(){
+            emptyResultProxy();
+        }
+        function emptyResultProxy(){
+            const resultValue = result.val();
+            const resultValueLength = resultValue.length;
+            if(resultValueLength>1)
+                result.val("");
+        }
+        function operatorIsValid(operator){
+            for (const validOperator of validOperators)
+                if (validOperator==operator)
+                    return true ;
+            return false;
+        }
+    </script>
+</head>
+<body>
+    <form class="pure-form container">
+        <input type="text" placeholder="first operator" id="first-operand"/>
+        <select id="operator">
+            <option selected> Asda </option>
+            <option> + </option>
+            <option> - </option>
+            <option> / </option>
+            <option> % </option>
+        </select>
+        <input type="text" placeholder="second operator " id="second-operand"/>
+        =
+        <input type="text" placeholder="" disabled id="result" class="pure-input-rounded"/>
+        <button type="submit" class="pure-button pure-input-2-3 pure-button-primary" id="show-result"> show result </button>
+    </form>
+</body>
+</html>
